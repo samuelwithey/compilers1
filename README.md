@@ -149,17 +149,19 @@ Note that you are not asked to write a parser for the full language given here, 
 
 Your parser has to implement the interface Parser given next.
 
-interface Parser {
-    public Block parse ( List < Token > input ) throws SyntaxException, 
-                                                       Task3Exception; }
+    interface Parser {
+    	public Block parse ( List < Token > input ) throws SyntaxException, Task3Exception; 
+    }
 
     class SyntaxException extends Exception {
-    public String msg;
-    public SyntaxException ( String _msg ) { msg = _msg; } }
+    	public String msg;
+    	public SyntaxException ( String _msg ) { msg = _msg; } 
+    }
 
-class Task3Exception extends Exception {
-    public String msg;
-    public Task3Exception ( String _msg ) { msg = _msg; } }
+    class Task3Exception extends Exception {
+    	public String msg;
+	public Task3Exception ( String _msg ) { msg = _msg; } 
+    }
 
 Here List<...> is the list class imported from java.util.List. The AST class Block is given here. You need to use those classes and not modify them at all. The class SyntaxException should be thrown whenever input is encountered that does not adhere to the syntactic specification. Do not use this exception to indicate any other form of error -- use Task3Exception for any other error. Errors should be reported by exception only.
 
