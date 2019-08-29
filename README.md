@@ -67,3 +67,147 @@ Clearly BinaryNumbersDivisibleBy4 implements the FSA given by this picture (red 
 
 Image of FSA
 Note that your submission might be tested with input over larger alphabets of integers. You may also encounter automata where initial and terminal state are not identical.
+
+# Task 2
+
+
+Introduction. In this task you will write a lexer for the simple programming language given here. You are free to write the lexer in any form you want, whether 'by hand' or with lexer generator, as long as it adheres to the requirements specified below. Writing the lexer by hand will give you a better understanding of lexical analysis, while using a tools achieves the goal with many fewer lines of code (my example solution, written using the JFlex lexer generator is around 60 lines of code). Another implementation technique (probably easier) is using Java's regular expression library.
+
+Task. Your lexer takes arbitrary strings (over the given alphabet) as input, and returns either a suitable token list when the input is lexically valid, or a suitable error exception (when the input is lexically invalid). Note that you are not asked to check if the input is syntactically correct w.r.t. to the context free grammar here. You should only check for lexical correctness.
+
+The lexer has to have the following signature.
+
+class LexicalException extends Exception {
+    public String msg;
+    public LexicalException ( String _msg ) { msg = _msg; } }
+
+class Task2Exception extends Exception {
+    public String msg;
+    public Task2Exception ( String _msg ) { msg = _msg; } }
+
+interface Lexer {
+    public List<Token> lex ( String input ) throws LexicalException, 
+                                                   Task2Exception; }
+Here List<...> is the list class imported from java.util.List. The lex method takes a string that is to be lexed. The interface Token and all its implementations are given here. You need to use those tokens. The class LexicalException should be thrown whenever input is encountered that does not adhere to the specification. Do not use this exception to indicate any other form of error -- use Task2Exception for any other error. Errors should be reported by exception only.
+
+You will also have to implement a method create that, when called, returns an instance of the interface Lexer. For this please use the following fragment, replacing ... with the appropriate code.
+
+class Task2 {
+    public static Lexer create () { ... } }
+For your convenience, here are the remaining definitions in one file. If you use a lexer generator to handle this task, I strongly recommend submitting the generator's source files too. I am unable to comprehend and comment on auto-generated lexers without source files: the auto-generated code is too complicated/weird for humans to comprehend directly.
+
+Examples. Here is a lexically valid program in the language.
+
+def f(x,y,z) = { if x == y then { z } else { 0 } }
+It gives rise to the following token stream.
+
+T_Def 
+T_Identifier ( "f" )
+T_LeftBracket
+T_Identifier ( "x" )
+T_Comma
+T_Identifier ( "y" )
+T_Comma
+T_Identifier ( "z" )
+T_RightBracket
+T_EqualDefines
+T_LeftCurlyBracket
+T_If
+T_Identifier ( "x" )
+T_Equal
+T_Identifier ( "y" )
+T_Then
+T_LeftCurlyBracket
+T_Identifier ( "z" )
+T_RightCurlyBracket
+T_Else
+T_LeftCurlyBracket
+T_Integer ( 0 )
+T_RightCurlyBracket
+T_RightCurlyBracket
+Note that the following is also a valid (at the lexical level) input.
+
+;;{{{}}{{{ {{}}}} }}}}}}}}10 10 if if then then then else
+
+
+# Task 3
+
+Introduction. This task is about parsing. You will write a parser for a fragment of the simple programming language given here.
+
+Task. Write a parser for the language specified by the CFG below.
+
+ INT → ... 
+ BLOCK → { ENE }
+ ENE → E | E; ENE
+ E →  INT | BLOCK | skip
+The starting symbol is BLOCK. Your parser will take as input a token list, using the definition of tokens from Task 2 (given here). Your parser should return a suitable AST (i.e. an instance of the class Block), provided the input adheres to the syntax given above. Otherwise it should throw a SyntaxException given below. As the parser takes a token list as input, it might be helpful to see the grammar in a form where terminal symbols are token names. Since the grammar above does not parse the full language, not all valid tokens are used for valid programs, e.g. T_Then .
+
+ BLOCK → T_LeftCurlyBracket ENE T_RightCurlyBracket
+ ENE → E | E T_Semicolon ENE
+ E →  T_Integer | BLOCK | T_Skip
+Note that you are not asked to write a parser for the full language given here, only for the fragment above. You are free to write the parser in any form you want, whether 'by hand' or with a parser generator like CUPS, Yacc etc. As the grammar fragment is so simple, I recommend writing a top-down parser 'by hand'. As explained in the lectures, a top-down parser is naturally written using recursion rather than loops. If you find yourself using loop constructs, I recommend to rethink your approach. If you use a parser generator to handle this task, I strongly recommend submitting the generator's source files too. I am unable to comprehend and comment on auto-generated parsers without source files: the auto-generated code is too complicated/weird for humans to comprehend directly.
+
+Your parser has to implement the interface Parser given next.
+
+interface Parser {
+    public Block parse ( List < Token > input ) throws SyntaxException, 
+                                                       Task3Exception; }
+
+    class SyntaxException extends Exception {
+    public String msg;
+    public SyntaxException ( String _msg ) { msg = _msg; } }
+
+class Task3Exception extends Exception {
+    public String msg;
+    public Task3Exception ( String _msg ) { msg = _msg; } }
+
+Here List<...> is the list class imported from java.util.List. The AST class Block is given here. You need to use those classes and not modify them at all. The class SyntaxException should be thrown whenever input is encountered that does not adhere to the syntactic specification. Do not use this exception to indicate any other form of error -- use Task3Exception for any other error. Errors should be reported by exception only.
+
+You will also have to implement a method create that, when called, returns an instance of the interface Parser. For this please use the following fragment, replacing ... with the appropriate code.
+
+class Task3 {
+    public static Parser create () { ... } }
+For your convenience, here are the remaining definitions in one file.
+
+# Language Syntax
+Lexical description. The lexical units of the language are integers, special notation, identifiers, keywords, and white space. Any input string that contains only those components is lexically valid.
+
+Keywords. def, if, then, else, skip, while, do, repeat, until, break and continue. Note that keywords are case sensitive, and do not contain upper-case letters.
+Integers. Integers are non-empty strings of digits 0-9.
+Identifiers. Identifiers are non-empty strings consisting of letters (lower or upper case), digits, and the underscore character. The first character in an identifier must be a lower-case letter.
+White space. White space consists of any sequence of the characters: blank (ascii 32), \n (newline, ascii 10), \f (form feed, ascii 12), \r (carriage return, ascii 13), \t (tab, ascii 9). Whitespace always separates tokens: whatever (non whitespace) is to the left of a whitespace must be part of a different token than whatever is on the right of the whitespace. Note that the opposite direction is not necessarily true: two distinct tokens are not always separated by whitespace, for example the string (()) consists of 4 tokens, likewise the string 65x consists of two tokens, T_Integer(65) followed by token T_Identifier("x"), and the string 65if; should be lexed into T_Integer(65) T_If T_Semicolon.
+Special notation. The special syntactic symbols (e.g., parentheses, assignment operator, etc.) are as follows.
+	; ( ) = == < > <= >= , { } := + * - /
+      
+Like white space, special notation always separates tokens.
+Disambiguation. The rules above are ambiguous. To disambiguate, use the following two policies.
+Operate a 'longest match' policy to disambiguate: if the beginning of a string can be lexed in several ways, choose the tokensisation where the initial token removes the most from the beginning of the string.
+If there are more than one longest match, give preference to keywords.
+For example the string deff should be lexed into a single identifier, not the token def followed by the identifier f. Similarly, === must be == followed by =, not the other way round or three occurences of =.
+
+Syntax description. Here is the language syntax, given by the following context free grammar with initial non-terminal PROG, where ε stands for the empty production.
+
+ PROG → DEC | DEC PROG 
+ DEC → def ID (VARDEC) = BLOCK
+ VARDEC →  ε | VARDECNE 
+ VARDECNE → ID | VARDECNE, ID 
+ ID → ... (identifiers)
+ INT → ... (Integers)
+ BLOCK → { ENE }
+ ENE → E | E; ENE
+ E →  INT 
+   | ID 
+   | if E COMP E then BLOCK else BLOCK
+   | (E BINOP E)
+   | skip
+   | BLOCK
+   | while E COMP E do BLOCK 
+   | repeat BLOCK until E COMP E 
+   | ID := E
+   | ID (ARGS)
+   | break
+   | continue
+ ARGS → ε | ARGSNE
+ ARGSNE → E | ARGSNE, E
+ COMP → == | < | > | <= | >=
+ BINOP → + | - | * | / 
