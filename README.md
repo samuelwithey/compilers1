@@ -6,20 +6,23 @@ Task. You are asked to produce a Java program that takes as input a 2-dimensiona
 
 Let's make this more precise. As characters we only allow integers. States are also integers. More precisely:
 
-Alphabet. We assume that the alphabet of any given language is always of the form {0, 1, ..., m} for some fixed integer m. (The m might be different for different languages.)
-States. We assume that the states of any given FSA is always of the form {0, 1, ..., n} for some fixed integer n. (The n might be different for different FSAs.)
-Terminal state. We assume exactly one terminal state, which must be one of {0, 1, ..., n}.
+* Alphabet. We assume that the alphabet of any given language is always of the form {0, 1, ..., m} for some fixed integer m. (The m might be different for different languages.)
+* States. We assume that the states of any given FSA is always of the form {0, 1, ..., n} for some fixed integer n. (The n might be different for different FSAs.)
+* Terminal state. We assume exactly one terminal state, which must be one of {0, 1, ..., n}.
+
 The signature that characterises the input that your submission needs to process is:
 
-interface Matrix2D {
-    public int initialState ();
-    public int terminalState ();
-    public int nextState ( int currentState, int character ); }
+    interface Matrix2D {
+    	public int initialState ();
+    	public int terminalState ();
+	public int nextState ( int currentState, int character ); 
+    }
 	  
 You can think of nextState( s, c ) as giving the entry in the 2-dimensional matrix at row s and column c. Your solution to Task 1 must be of the following form:
 
-class Task1 {
-    public static Language create ( Matrix2D matrix2D ) { return ...; } }
+    class Task1 {
+        public static Language create ( Matrix2D matrix2D ) { return ...; } 
+    }
 	  
 In other words, you must submit a working implementation of the class Task1. This means you must replace the ... by actual Java (and add other code). You can think of create as a 'language factory' that, when called, returns an instance of the interface Language. You will have to submit the Java for this instance. In other words, create takes as input a matrix (an instance of the Matrix2D interface) representing an FSA, and returns an object deciding the language given by the matrix. The Language interface is as follows:
 
