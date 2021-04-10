@@ -1,3 +1,5 @@
+It is assumed that future years’ assignments will be sufficiently different (in line with best assessment practice) and so this will not provide assistance beyond that already available.
+
 # Task 1
 
 Introduction. In the lectures we saw how a finite state automaton (FSA) can be represented by a 2-dimensional matrix. In this task you should write a simple FSA that takes as input a matrix and then decides the language given by the matrix. Note that the specification below is wordy, but the task is very simple: my example solution is 11 lines of plain Java code, and it's not importing any libraries.
